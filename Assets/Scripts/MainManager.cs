@@ -16,6 +16,13 @@ public class MainManager : MonoBehaviour
 		{
 			Instance = this;
 			DontDestroyOnLoad(gameObject);
+
+			// Persist the Canvas and all its children
+			var canvas = GameObject.Find("Canvas");
+			if (canvas != null && canvas.transform.parent == null)
+			{
+				DontDestroyOnLoad(canvas);
+			}
 		}
 		else
 		{
@@ -25,7 +32,9 @@ public class MainManager : MonoBehaviour
 
 	public Brick BrickPrefab;
 	public int LineCount = 6;
-	public Rigidbody Ball;
+	public Rigidbody BallPF;
+	Rigidbody Ball;
+	public Transform Paddle;
 
 	public Text ScoreText;
 	public Text HighScoreText;
@@ -65,6 +74,17 @@ public class MainManager : MonoBehaviour
 				brick.PointValue = pointCountArray[i];
 				brick.onDestroyed.AddListener(AddPoint);
 			}
+		}
+
+		// Create a new ball 
+		Ball = Instantiate(BallPF, Paddle.position + Vector3.up * 0.5f, Quaternion.identity);
+		Ball.transform.SetParent(Paddle);
+
+		// Persist the Paddle and all its children
+		var paddle = GameObject.Find("Paddle");
+		if (paddle != null && paddle.transform.parent == null)
+		{
+			DontDestroyOnLoad(paddle);
 		}
 
 		LoadData();
